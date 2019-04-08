@@ -380,7 +380,7 @@ class CryptoNote {
   const ADDRESS_CHECKSUM_SIZE = 4;
   const INTEGRATED_ID_SIZE = 8;
 
-  let dec = cnBase58.decode(address);
+  let dec = Base58.decode(address);
 	
   const expectedPrefix = encodeVarint(addressPrefix);	
   const expectedPrefixInt = encodeVarint(addressPrefixInt);	
