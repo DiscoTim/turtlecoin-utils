@@ -375,7 +375,7 @@ class CryptoNote {
 
 
 
-  function decodeAddress2(address, addressPrefix, addressPrefixInt) {
+  decodeAddress2(address, addressPrefix, addressPrefixInt) {
 	
   const ADDRESS_CHECKSUM_SIZE = 4;
   const INTEGRATED_ID_SIZE = 8;
