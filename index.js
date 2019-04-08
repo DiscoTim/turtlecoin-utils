@@ -308,14 +308,14 @@ class CryptoNote {
       if (type1 === 'trtl') {
 
         try {
-          decodedAddress = decodeAddress(address, prefix1)
+          decodedAddress = this.decodeAddress(address, prefix1)
         } catch(e) {
         }
 
       }  else if (type1 === 'xmr') {
 
         try {
-          decodedAddress = decodeAddress2(address, prefix1, prefixInt1)
+          decodedAddress = this.decodeAddress2(address, prefix1, prefixInt1)
         } catch(e) {
         }
 
@@ -326,14 +326,14 @@ class CryptoNote {
       if (type2 === 'trtl') {
 
         try {
-          decodedAddress = decodeAddress(address, prefix2)
+          decodedAddress = this.decodeAddress(address, prefix2)
         } catch(e) {
         }
 
       }  else if (type2 === 'xmr') {
 
         try {
-          decodedAddress = decodeAddress2(address, prefix2, prefixInt2)
+          decodedAddress = this.decodeAddress2(address, prefix2, prefixInt2)
         } catch(e) {
         }
 
