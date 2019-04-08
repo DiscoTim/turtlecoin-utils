@@ -301,37 +301,43 @@ class CryptoNote {
 
   decodeAddressMulti(address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2) {
 
+      var decodedAddress;
+
       if (type1 === 'trtl') {
 
         try {
-          return decodeAddress(address, prefix1)
+          decodedAddress = decodeAddress(address, prefix1)
         } catch(e) {
         }
 
       }  else if (type1 === 'xmr') {
 
         try {
-          return decodeAddress2(address, prefix1, prefixInt1)
+          decodedAddress = decodeAddress2(address, prefix1, prefixInt1)
         } catch(e) {
         }
 
       }
       
+      if (decodedAddress) return decodedAddress;
+
       if (type2 === 'trtl') {
 
         try {
-          return decodeAddress(address, prefix2)
+          decodedAddress = decodeAddress(address, prefix2)
         } catch(e) {
         }
 
       }  else if (type2 === 'xmr') {
 
         try {
-          return decodeAddress2(address, prefix2, prefixInt2)
+          decodedAddress = decodeAddress2(address, prefix2, prefixInt2)
         } catch(e) {
         }
 
       }
+
+      if (decodedAddress) return decodedAddress;
 
       return false;
   }
