@@ -419,21 +419,21 @@ class CryptoNote {
 		throw Error("Invalid checksum");
 	}
 
-  const data = expectedPrefix + spend + view;
+  const data = expectedPrefix.toString() + spend.toString() + view.toString();
 	const addressChecksum = cnFastHash(data);
-	const encodableData = data + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
-	const address = Base58.encode(encodableData);
+	const encodableData = data.toString() + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
+	const standardAddress = Base58.encode(encodableData);
 
 	if (intPaymentId) {
 		return {
-      address: address,
+      address: standardAddress,
 			spend: spend,
 			view: view,
 			intPaymentId: intPaymentId
 		};
 	} else {
 		return {
-      address: address,
+      address: standardAddress,
 			spend: spend,
 			view: view,
 		};
