@@ -418,15 +418,22 @@ class CryptoNote {
 	if (checksum !== expectedChecksum) {
 		throw Error("Invalid checksum");
 	}
+
+  const data = addressPrefix + spend + view;
+	const addressChecksum = cnFastHash(data);
+	const encodableData = data + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
+	const address = Base58.encode(encodableData);
+
 	if (intPaymentId) {
 		return {
+      address: address,
 			spend: spend,
 			view: view,
-			intPaymentId: intPaymentId,
-      paymentId: Base58.hextostr(intPaymentId)
+			intPaymentId: intPaymentId
 		};
 	} else {
 		return {
+      address: address,
 			spend: spend,
 			view: view,
 		};
