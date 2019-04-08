@@ -299,6 +299,44 @@ class CryptoNote {
     }
   }
 
+  decodeAddressMulti(address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2) {
+
+      if (type1 === 'trtl') {
+
+        try {
+          return decodeAddress(address, prefix1)
+        }
+        catch (){}
+
+      }  else if (type1 === 'xmr') {
+
+        try {
+          return decodeAddress2(address, prefix1, prefixInt1)
+        }
+        catch (){}
+
+      }
+      
+      if (type2 === 'trtl') {
+
+        try {
+          return decodeAddress(address, prefix2)
+        }
+        catch (){}
+
+      }  else if (type2 === 'xmr') {
+
+        try {
+          return decodeAddress2(address, prefix2, prefixInt2)
+        }
+        catch (){}
+
+      }
+
+      return false;
+  }
+
+
   decodeAddress (address, addressPrefix) {
     addressPrefix = addressPrefix || this.config.addressPrefix
 
@@ -366,11 +404,11 @@ class CryptoNote {
 
     return {
       address: standardAddress,
+      prefix: addressPrefix,
       publicViewKey: publicView,
       publicSpendKey: publicSpend,
       paymentId: paymentId,
-      encodedPrefix: prefix,
-      prefix: addressPrefix,
+      encodedPrefix: prefix,      
       rawAddress: Base58.decode(address)
     }
   }
@@ -427,6 +465,7 @@ class CryptoNote {
 	  if (intPaymentId) {
 		  return {
         address: standardAddress,
+        prefix: addressPrefix,
 			  spend: spend,
 			  view: view,
 			  paymentId: intPaymentId
@@ -434,6 +473,7 @@ class CryptoNote {
 	  } else {
 		  return {
         address: standardAddress,
+        prefix: addressPrefix,
 			  spend: spend,
 			  view: view,
 		  };
