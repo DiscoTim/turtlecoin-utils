@@ -303,6 +303,8 @@ class CryptoNote {
 
       var decodedAddress;
 
+      console.log([address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2]);
+
       if (type1 === 'trtl') {
 
         try {
