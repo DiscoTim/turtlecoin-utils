@@ -419,7 +419,7 @@ class CryptoNote {
 		throw Error("Invalid checksum");
 	}
 
-  const data = addressPrefix + spend + view;
+  const data = expectedPrefix + spend + view;
 	const addressChecksum = cnFastHash(data);
 	const encodableData = data + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
 	const address = Base58.encode(encodableData);
