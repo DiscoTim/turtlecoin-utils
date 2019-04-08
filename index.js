@@ -359,7 +359,13 @@ class CryptoNote {
       throw new Error('Could not parse address: checksum mismatch')
     }
 
+    const data = encodedPrefix.toString() + publicSpend.toString() + publicView.toString();
+	  const addressChecksum = cnFastHash(data);
+	  const encodableData = data.toString() + addressChecksum.slice(0, 8);
+	  const standardAddress = Base58.encode(encodableData);
+
     return {
+      address: standardAddress,
       publicViewKey: publicView,
       publicSpendKey: publicSpend,
       paymentId: paymentId,
@@ -429,7 +435,7 @@ class CryptoNote {
       address: standardAddress,
 			spend: spend,
 			view: view,
-			intPaymentId: intPaymentId
+			paymentId: intPaymentId
 		};
 	} else {
 		return {
