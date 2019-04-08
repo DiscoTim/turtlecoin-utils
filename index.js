@@ -374,83 +374,71 @@ class CryptoNote {
       rawAddress: Base58.decode(address)
     }
   }
-
-
-
-
-
-
-
+  
   decodeAddress2(address, addressPrefix, addressPrefixInt) {
 	
-  const ADDRESS_CHECKSUM_SIZE = 4;
-  const INTEGRATED_ID_SIZE = 8;
+    const ADDRESS_CHECKSUM_SIZE = 4;
+    const INTEGRATED_ID_SIZE = 8;
 
-  let dec = Base58.decode(address);
+    let dec = Base58.decode(address);
 	
-  const expectedPrefix = encodeVarint(addressPrefix);	
-  const expectedPrefixInt = encodeVarint(addressPrefixInt);	
+    const expectedPrefix = encodeVarint(addressPrefix);	
+    const expectedPrefixInt = encodeVarint(addressPrefixInt);	
 
-	const prefix = dec.slice(0, expectedPrefix.length);
+	  const prefix = dec.slice(0, expectedPrefix.length);
 	
-  if ( prefix !== expectedPrefix && prefix !== expectedPrefixInt) {
-		throw Error("Invalid address prefix");
-	}
+    if ( prefix !== expectedPrefix && prefix !== expectedPrefixInt) {
+		  throw Error("Invalid address prefix");
+	  }
 
-	dec = dec.slice(expectedPrefix.length);
-	const spend = dec.slice(0, 64);
-	const view = dec.slice(64, 128);
+	  dec = dec.slice(expectedPrefix.length);
+	  const spend = dec.slice(0, 64);
+	  const view = dec.slice(64, 128);
 	
-  let checksum;
-	let expectedChecksum;
-	let intPaymentId;
+    let checksum;
+	  let expectedChecksum;
+	  let intPaymentId;
 
-	if (prefix === expectedPrefixInt) {
-		intPaymentId = dec.slice(128, 128 + INTEGRATED_ID_SIZE * 2);
-		checksum = dec.slice(
-			128 + INTEGRATED_ID_SIZE * 2,
-			128 + INTEGRATED_ID_SIZE * 2 + ADDRESS_CHECKSUM_SIZE * 2,
-		);
-		expectedChecksum = cnFastHash(
-			prefix + spend + view + intPaymentId,
-		).slice(0, ADDRESS_CHECKSUM_SIZE * 2);
-	} else {
-		checksum = dec.slice(128, 128 + ADDRESS_CHECKSUM_SIZE * 2);
-		expectedChecksum = cnFastHash(prefix + spend + view).slice(
-			0,
-			ADDRESS_CHECKSUM_SIZE * 2,
-		);
-	}
-	if (checksum !== expectedChecksum) {
-		throw Error("Invalid checksum");
-	}
+	  if (prefix === expectedPrefixInt) {
+		  intPaymentId = dec.slice(128, 128 + INTEGRATED_ID_SIZE * 2);
+		  checksum = dec.slice(
+			  128 + INTEGRATED_ID_SIZE * 2,
+			  128 + INTEGRATED_ID_SIZE * 2 + ADDRESS_CHECKSUM_SIZE * 2,
+		  );
+		  expectedChecksum = cnFastHash(
+			  prefix + spend + view + intPaymentId,
+		  ).slice(0, ADDRESS_CHECKSUM_SIZE * 2);
+	  } else {
+		  checksum = dec.slice(128, 128 + ADDRESS_CHECKSUM_SIZE * 2);
+		  expectedChecksum = cnFastHash(prefix + spend + view).slice(
+			  0,
+			  ADDRESS_CHECKSUM_SIZE * 2,
+		  );
+	  }
+	  if (checksum !== expectedChecksum) {
+		  throw Error("Invalid checksum");
+	  }
 
-  const data = expectedPrefix.toString() + spend.toString() + view.toString();
-	const addressChecksum = cnFastHash(data);
-	const encodableData = data.toString() + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
-	const standardAddress = Base58.encode(encodableData);
+    const data = expectedPrefix.toString() + spend.toString() + view.toString();
+	  const addressChecksum = cnFastHash(data);
+	  const encodableData = data.toString() + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
+	  const standardAddress = Base58.encode(encodableData);
 
-	if (intPaymentId) {
-		return {
-      address: standardAddress,
-			spend: spend,
-			view: view,
-			paymentId: intPaymentId
-		};
-	} else {
-		return {
-      address: standardAddress,
-			spend: spend,
-			view: view,
-		};
-	}
-}
-
-  
-  
-  
-  
-  
+	  if (intPaymentId) {
+		  return {
+        address: standardAddress,
+			  spend: spend,
+			  view: view,
+			  paymentId: intPaymentId
+		  };
+	  } else {
+		  return {
+        address: standardAddress,
+			  spend: spend,
+			  view: view,
+		  };
+	  }
+  }
   
   encodeRawAddress (rawAddress) {
     return Base58.encode(rawAddress)
