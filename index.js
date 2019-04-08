@@ -305,15 +305,15 @@ class CryptoNote {
 
         try {
           return decodeAddress(address, prefix1)
+        } catch(e) {
         }
-        catch() {}
 
       }  else if (type1 === 'xmr') {
 
         try {
           return decodeAddress2(address, prefix1, prefixInt1)
+        } catch(e) {
         }
-        catch(){}
 
       }
       
@@ -321,15 +321,15 @@ class CryptoNote {
 
         try {
           return decodeAddress(address, prefix2)
+        } catch(e) {
         }
-        catch() {}
 
       }  else if (type2 === 'xmr') {
 
         try {
           return decodeAddress2(address, prefix2, prefixInt2)
+        } catch(e) {
         }
-        catch() {}
 
       }
 
