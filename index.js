@@ -369,6 +369,76 @@ class CryptoNote {
     }
   }
 
+
+
+
+
+
+
+  function decodeAddress2(address, addressPrefix, addressPrefixInt) {
+	
+  const ADDRESS_CHECKSUM_SIZE = 4;
+  const INTEGRATED_ID_SIZE = 8;
+
+  let dec = cnBase58.decode(address);
+	
+  const expectedPrefix = encodeVarint(addressPrefix);	
+  const expectedPrefixInt = encodeVarint(addressPrefixInt);	
+
+	const prefix = dec.slice(0, expectedPrefix.length);
+	
+  if ( prefix !== expectedPrefix && prefix !== expectedPrefixInt) {
+		throw Error("Invalid address prefix");
+	}
+
+	dec = dec.slice(expectedPrefix.length);
+	const spend = dec.slice(0, 64);
+	const view = dec.slice(64, 128);
+	
+  let checksum;
+	let expectedChecksum;
+	let intPaymentId;
+
+	if (prefix === expectedPrefixInt) {
+		intPaymentId = dec.slice(128, 128 + INTEGRATED_ID_SIZE * 2);
+		checksum = dec.slice(
+			128 + INTEGRATED_ID_SIZE * 2,
+			128 + INTEGRATED_ID_SIZE * 2 + ADDRESS_CHECKSUM_SIZE * 2,
+		);
+		expectedChecksum = cnFastHash(
+			prefix + spend + view + intPaymentId,
+		).slice(0, ADDRESS_CHECKSUM_SIZE * 2);
+	} else {
+		checksum = dec.slice(128, 128 + ADDRESS_CHECKSUM_SIZE * 2);
+		expectedChecksum = cnFastHash(prefix + spend + view).slice(
+			0,
+			ADDRESS_CHECKSUM_SIZE * 2,
+		);
+	}
+	if (checksum !== expectedChecksum) {
+		throw Error("Invalid checksum");
+	}
+	if (intPaymentId) {
+		return {
+			spend: spend,
+			view: view,
+			intPaymentId: intPaymentId,
+      paymentId: Base58.hextostr(intPaymentId)
+		};
+	} else {
+		return {
+			spend: spend,
+			view: view,
+		};
+	}
+}
+
+  
+  
+  
+  
+  
+  
   encodeRawAddress (rawAddress) {
     return Base58.encode(rawAddress)
   }
