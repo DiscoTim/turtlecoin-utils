@@ -299,41 +299,40 @@ class CryptoNote {
     }
   }
 
-  decodeAddressMulti(address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2) {
+  decodeAddress(address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2) {
 
       var decodedAddress;
-
-      console.log([address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2]);
-
+      
       if (type1 === 'trtl') {
 
         try {
-          decodedAddress = this.decodeAddress(address, prefix1)
+          decodedAddress = this.decodeAddressTRTL(address, prefix1)
         } catch(e) {
         }
 
       }  else if (type1 === 'xmr') {
 
         try {
-          decodedAddress = this.decodeAddress2(address, prefix1, prefixInt1)
+          decodedAddress = this.decodeAddressXMR(address, prefix1, prefixInt1)
         } catch(e) {
         }
 
       }
       
       if (decodedAddress) return decodedAddress;
+      if (!type2) return false
 
       if (type2 === 'trtl') {
 
         try {
-          decodedAddress = this.decodeAddress(address, prefix2)
+          decodedAddress = this.decodeAddressTRTL(address, prefix2)
         } catch(e) {
         }
 
       }  else if (type2 === 'xmr') {
 
         try {
-          decodedAddress = this.decodeAddress2(address, prefix2, prefixInt2)
+          decodedAddress = this.decodeAddressXMR(address, prefix2, prefixInt2)
         } catch(e) {
         }
 
@@ -344,8 +343,7 @@ class CryptoNote {
       return false;
   }
 
-
-  decodeAddress (address, addressPrefix) {
+  decodeAddressTRTL (address, addressPrefix) {
     addressPrefix = addressPrefix || this.config.addressPrefix
 
     /* First, we decode the base58 string to hex */
@@ -421,7 +419,7 @@ class CryptoNote {
     }
   }
   
-  decodeAddress2(address, addressPrefix, addressPrefixInt) {
+  decodeAddressXMR(address, addressPrefix, addressPrefixInt) {
 	
     const ADDRESS_CHECKSUM_SIZE = 4;
     const INTEGRATED_ID_SIZE = 8;
@@ -484,6 +482,7 @@ class CryptoNote {
         prefix: addressPrefix,
 			  spend: spend,
 			  view: view,
+        paymentId: ''
 		  };
 	  }
   }
