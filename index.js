@@ -429,13 +429,19 @@ class CryptoNote {
     const expectedPrefix = encodeVarint(addressPrefix);	
     const expectedPrefixInt = encodeVarint(addressPrefixInt);	
 
-	  const prefix = dec.slice(0, expectedPrefix.length);
-	
-    if ( prefix !== expectedPrefix && prefix !== expectedPrefixInt) {
-		  throw Error("Invalid address prefix");
-	  }
+	  var prefix = dec.slice(0, expectedPrefix.length);
 
-	  dec = dec.slice(expectedPrefix.length);
+    if (prefix !==  expectedPrefix) {
+      prefix = dec.slice(0, expectedPrefixInt.length);
+      if (prefix !== expectedPrefixInt) {
+        throw Error("Invalid address prefix");
+      } else {
+        dec = dec.slice(expectedPrefixInt.length);
+      }
+    } else {
+      dec = dec.slice(expectedPrefix.length);
+    }
+ 
 	  const spend = dec.slice(0, 64);
 	  const view = dec.slice(64, 128);
 	
