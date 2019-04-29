@@ -441,6 +441,7 @@ class CryptoNote {
          if (prefix !== expectedPrefixSub) {
           throw Error("Invalid address prefix");
          } else {
+          dec = dec.slice(expectedPrefixSub.length);
           isSubAddress = true;
          }
       } else {
@@ -477,7 +478,7 @@ class CryptoNote {
 		  throw Error("Invalid checksum");
 	  }
 
-    const data = (isSubAddress ? expectedPrefixSub.toString() : expectedPrefix.toString()) + spend.toString() + view.toString();
+    const data = (isSubAddress ? expectedPrefixSub : expectedPrefix).toString() + spend.toString() + view.toString();
 	  const addressChecksum = cnFastHash(data);
 	  const encodableData = data.toString() + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
 	  const standardAddress = Base58.encode(encodableData);
@@ -493,7 +494,7 @@ class CryptoNote {
 	  } else {
 		  return {
         address: standardAddress,
-        prefix: (isSubAddress ? expectedPrefixSub.toString() : expectedPrefix.toString()),
+        prefix: (isSubAddress ? addressPrefixSub : addressPrefix),
 			  spend: spend,
 			  view: view,
         paymentId: ''
