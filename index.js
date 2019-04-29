@@ -299,7 +299,7 @@ class CryptoNote {
     }
   }
 
-  decodeAddress(address, prefix1, prefixInt1, type1, prefix2, prefixInt2, type2) {
+  decodeAddress(address, prefix1, prefixInt1, prefixSub1, type1, prefix2, prefixInt2, prefixSub2, type2) {
 
       var decodedAddress;
       
@@ -313,7 +313,7 @@ class CryptoNote {
       }  else if (type1 === 'xmr') {
 
         try {
-          decodedAddress = this.decodeAddressXMR(address, prefix1, prefixInt1)
+          decodedAddress = this.decodeAddressXMR(address, prefix1, prefixInt1, prefixSub1)
         } catch(e) {
         }
 
@@ -332,7 +332,7 @@ class CryptoNote {
       }  else if (type2 === 'xmr') {
 
         try {
-          decodedAddress = this.decodeAddressXMR(address, prefix2, prefixInt2)
+          decodedAddress = this.decodeAddressXMR(address, prefix2, prefixInt2, prefixSub2)
         } catch(e) {
         }
 
@@ -419,7 +419,7 @@ class CryptoNote {
     }
   }
   
-  decodeAddressXMR(address, addressPrefix, addressPrefixInt) {
+  decodeAddressXMR(address, addressPrefix, addressPrefixInt, addressPrefixSub) {
 	
     const ADDRESS_CHECKSUM_SIZE = 4;
     const INTEGRATED_ID_SIZE = 8;
@@ -428,13 +428,21 @@ class CryptoNote {
 	
     const expectedPrefix = encodeVarint(addressPrefix);	
     const expectedPrefixInt = encodeVarint(addressPrefixInt);	
+    const expectedPrefixSub = encodeVarint(addressPrefixSub);	
 
 	  var prefix = dec.slice(0, expectedPrefix.length);
+
+    var isSubAddress = false;
 
     if (prefix !==  expectedPrefix) {
       prefix = dec.slice(0, expectedPrefixInt.length);
       if (prefix !== expectedPrefixInt) {
-        throw Error("Invalid address prefix");
+        prefix = dec.slice(0, expectedPrefixSub.length);
+         if (prefix !== expectedPrefixSub) {
+          throw Error("Invalid address prefix");
+         } else {
+          isSubAddress = true;
+         }
       } else {
         dec = dec.slice(expectedPrefixInt.length);
       }
@@ -469,7 +477,7 @@ class CryptoNote {
 		  throw Error("Invalid checksum");
 	  }
 
-    const data = expectedPrefix.toString() + spend.toString() + view.toString();
+    const data = (isSubAddress ? expectedPrefixSub.toString() : expectedPrefix.toString()) + spend.toString() + view.toString();
 	  const addressChecksum = cnFastHash(data);
 	  const encodableData = data.toString() + addressChecksum.slice(0, ADDRESS_CHECKSUM_SIZE * 2);
 	  const standardAddress = Base58.encode(encodableData);
@@ -485,7 +493,7 @@ class CryptoNote {
 	  } else {
 		  return {
         address: standardAddress,
-        prefix: addressPrefix,
+        prefix: (isSubAddress ? expectedPrefixSub.toString() : expectedPrefix.toString()),
 			  spend: spend,
 			  view: view,
         paymentId: ''
