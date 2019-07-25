@@ -505,8 +505,83 @@ class CryptoNote {
   encodeRawAddress (rawAddress) {
     return Base58.encode(rawAddress)
   }
+  
 
-  encodeAddress (publicViewKey, publicSpendKey, paymentId, addressPrefix) {
+
+  encodeAddress(type, publicViewKey, publicSpendKey, paymentId, addressPrefix) {
+
+      var encodeAddress;
+      
+      if (type === 'trtl') {
+
+        try {
+          encodeAddress = this.encodeAddressTRTL (publicViewKey, publicSpendKey, paymentId, addressPrefix)
+        } catch(e) {
+        }
+
+      }  else if (type === 'xmr') {
+
+        try {
+          encodeAddress = this.encodeAddressXMR (publicViewKey, publicSpendKey, paymentId, addressPrefix)
+        } catch(e) {
+        }
+
+      }
+
+      if (encodeAddress) return encodeAddress;
+      return false;
+  
+  }
+
+
+  encodeAddressXMR (publicViewKey, publicSpendKey, paymentId, addressPrefix) {
+   
+    paymentId = paymentId || false
+
+    if (!isHex64(publicViewKey)) {
+      throw new Error('Invalid public view key format')
+    }
+
+    if (!isHex64(publicSpendKey)) {
+      throw new Error('Invalid public spend key format')
+    }
+
+    /* If we included a payment ID it needs to be
+       64 hexadecimal characters */
+    if (paymentId && !isHex16(paymentId)) {
+      throw new Error('Invalid payment ID format')
+    }
+
+    var rawAddress = []
+
+    /* Encode our configured address prefix so that we can throw
+       it on the front of our address */
+    const encodedPrefix = encodeVarint(addressPrefix)
+    rawAddress.push(encodedPrefix)
+        
+    /* Then toss on our publicSpendKey followed by our public
+       view key */
+    rawAddress.push(publicSpendKey.toString())
+    rawAddress.push(publicViewKey.toString())
+
+    /* Is there a payment ID? If so, that comes next */
+    if (paymentId) {
+      paymentId = Base58.strtohex(paymentId)
+      rawAddress.push(paymentId)
+    }
+
+    rawAddress = rawAddress.join('')
+
+    /* Generate the checksum and toss that on the end */
+    const checksum = cnFastHash(rawAddress).slice(0, 8)
+    rawAddress += checksum
+
+    /* Finally, encode all that to Base58 */
+    return Base58.encode(rawAddress)
+  }
+
+
+  encodeAddressTRTL (publicViewKey, publicSpendKey, paymentId, addressPrefix) {
     addressPrefix = addressPrefix || this.config.addressPrefix
     paymentId = paymentId || false
 
@@ -789,6 +864,11 @@ function isHex (str) {
 
 function isHex64 (str) {
   const regex = new RegExp('^[0-9a-fA-F]{64}$')
+  return regex.test(str)
+}
+
+function isHex16 (str) {
+  const regex = new RegExp('^[0-9a-fA-F]{16}$')
   return regex.test(str)
 }
 
