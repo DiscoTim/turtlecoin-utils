@@ -566,7 +566,7 @@ class CryptoNote {
 
     /* Is there a payment ID? If so, that comes next */
     if (paymentId) {
-      paymentId = Base58.strtohex(paymentId)
+    // paymentId = Base58.strtohex(paymentId)
       rawAddress.push(paymentId)
     }
 
