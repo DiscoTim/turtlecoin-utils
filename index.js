@@ -413,6 +413,8 @@ class CryptoNote {
       prefix: addressPrefix,
       publicViewKey: publicView,
       publicSpendKey: publicSpend,
+      spend: publicSpend,
+      view: publicView,
       paymentId: paymentId,
       encodedPrefix: prefix,      
       rawAddress: Base58.decode(address)
